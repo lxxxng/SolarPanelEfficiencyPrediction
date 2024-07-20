@@ -1,5 +1,3 @@
 # ingore the data files and virtual environment
-data/weather.db
-data/air_quality.db
 venv/
 .gitignore
