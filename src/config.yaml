@@ -1,0 +1,20 @@
+database_path_1: 'data/weather.db'
+query_1: 'SELECT * FROM weather'
+database_path_2: 'data/air_quality.db'
+query_2: 'SELECT * FROM air_quality'
+
+preprocessing:
+  dropna: true
+  imputation_strategy: 'mean'
+  scaling: 'standard'
+  encoding: 'onehot'
+  feature_selection: true
+
+model_training:
+  algorithm: 'RandomForestClassifier'
+
+model_fine_tuning:
+  algorithm: 'RandomForestClassifier'
+  param_grid:
+    n_estimators: [100, 200, 300]
+    max_depth: [10, 20, 30]
