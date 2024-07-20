@@ -1,14 +1,17 @@
-database_path_1: 'data/weather.db'
+weather_path: 'data/weather.db'
 query_1: 'SELECT * FROM weather'
-database_path_2: 'data/air_quality.db'
+air_path: 'data/air_quality.db'
 query_2: 'SELECT * FROM air_quality'
 
 preprocessing:
-  dropna: true
-  imputation_strategy: 'mean'
+  num_imputation_strategy: 'mean'
+  cat_imputation_strategy: 'most_frequent'
   scaling: 'standard'
-  encoding: 'onehot'
-  feature_selection: true
+  label_encode_columns:
+    - 'Daily Solar Panel Efficiency'
+  one_hot_encode_columns:
+    - 'Wind Direction'
+    - 'Dew Point Category'
 
 model_training:
   algorithm: 'RandomForestClassifier'
