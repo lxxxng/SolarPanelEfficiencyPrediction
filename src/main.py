@@ -1,15 +1,15 @@
 import argparse
 import yaml
+import os
+import joblib
 import pandas as pd
+import numpy as np
 from .data_fetching import DataFetching
 from .data_preprocessing import DataPreprocessing
 from .feature_engineering import FeatureEngineering
-""" 
 from .model_training import ModelTraining
-from .model_initial_eval import ModelEvaluation
 from .model_fine_tuning import ModelFineTuning
-from .model_final_eval import ModelEvaluation
-import joblib """
+from .model_evaluation import ModelEvaluation
 
 def main(config_path):
     with open(config_path, 'r') as file:
@@ -69,41 +69,60 @@ def main(config_path):
     engineer = FeatureEngineering(config)
     merged_df = engineer.engineer_features(merged_df)
     
+    # feature selection
+    to_drop = ['data_ref_x', 'data_ref_y', 'Highest 30 Min Rainfall (mm)', \
+            'Highest 60 Min Rainfall (mm)', 'Highest 120 Min Rainfall (mm)', 'date']
+    merged_df.drop(columns=to_drop, inplace=True)
+    
     #2.9 scaling numerical features
     merged_df = processor.scale_data(merged_df)
     
     # 2.10 Mapping categorical features 
     merged_df = processor.map_categorical(merged_df)
     
-    # 2.11 encoding categorical features
+    # encoding categorical features
     merged_df = processor.label_encode_data(merged_df)
     merged_df = processor.one_hot_encode_data(merged_df)
-    
-    print(merged_df.info())
 
-    """ 
-    X_train, X_test, y_train, y_test = processor.split_data(df, 'Daily Solar Panel Efficiency')
+    # Split into train 80% and test set 20% with stratified sampling
+    X_train, X_test, y_train, y_test = processor.split_data(merged_df, 'Daily Solar Panel Efficiency')
 
-    # Train initial model
+    # Train initial models
     trainer = ModelTraining(config)
-    model = trainer.train_model(X_train, y_train)
-    joblib.dump(model, 'models/trained_model.joblib')
+    models = trainer.train_models(X_train, y_train)
+    
+    if not os.path.exists('models'):
+        os.makedirs('models')
+        
+    for model_name, model in models.items():
+        joblib.dump(model, f'models/{model_name}_trained_model.joblib')
 
-    # Evaluate initial model
+    # Evaluate initial models
     evaluator = ModelEvaluation(config)
-    initial_accuracy, initial_report = evaluator.evaluate_model(model, X_test, y_test)
-    print(f"Initial Model Accuracy: {initial_accuracy}")
-    print(f"Initial Model Classification Report:\n{initial_report}")
+    initial_results = evaluator.evaluate_models(models, X_test, y_test)
+    print("Before fine tune \n")
+    evaluator.print_results(initial_results)
 
-    # Fine-tune model
+    # Fine-tune models
+    print("--------------------------- Fine tuning -----------------------------------")
     fine_tuner = ModelFineTuning(config)
-    best_model = fine_tuner.fine_tune_model(X_train, y_train)
-    joblib.dump(best_model, 'models/best_model.joblib')
+    best_models, best_params = fine_tuner.fine_tune_models(models, X_train, y_train)
+    
+    for model_name, model in best_models.items():
+        joblib.dump(model, f'models/{model_name}_best_model.joblib')
+        
+    print("--------------------------- Fine tuning completed ! -----------------------------------")
+        
+    print("Best Parameters for Fine-Tuned Models:")
+    for model_name, params in best_params.items():
+        print(f"{model_name}: {params}")
 
-    # Evaluate fine-tuned model
-    final_accuracy, final_report = evaluator.evaluate_model(best_model, X_test, y_test)
-    print(f"Fine-Tuned Model Accuracy: {final_accuracy}")
-    print(f"Fine-Tuned Model Classification Report:\n{final_report}") """
+    # Evaluate fine-tuned models
+    final_results = evaluator.evaluate_models(best_models, X_test, y_test)
+    
+    print("\n Results after fine tuning \n")
+    evaluator.print_results(final_results)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run the end-to-end machine learning pipeline.')
