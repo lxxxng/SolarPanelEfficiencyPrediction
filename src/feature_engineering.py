@@ -12,7 +12,7 @@ class FeatureEngineering:
         df['pm25_mean'] = df[pm25_columns].mean(axis=1)
         df.drop(columns=psi_columns + pm25_columns, inplace=True)
         
-        df['temp_diff'] = df['Maximum Temperature (deg C)'] - df['Min Temperature (deg C)']
+        df['temp_range'] = df['Maximum Temperature (deg C)'] - df['Min Temperature (deg C)']
         df['wind_speed_range'] = df['Max Wind Speed (km/h)'] - df['Min Wind Speed (km/h)']
 
         return df

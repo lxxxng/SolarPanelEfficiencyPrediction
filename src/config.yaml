@@ -40,7 +40,7 @@ model_fine_tuning:
       C: [0.1, 1, 10, 100]
       solver: ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
       penalty: ['l2']
-      max_iter: [100, 200, 300, None]
+      max_iter: [100, 200, 300]
   MLP:
     param_grid:
       hidden_layer_sizes: [[50], [100], [150]]
