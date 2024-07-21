@@ -1,6 +1,3 @@
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 
 class ModelFineTuning:
@@ -22,6 +19,8 @@ class ModelFineTuning:
         for model_name, model in models.items():
             if model_name == 'RandomForestClassifier':
                 param_grid = self.config['model_fine_tuning']['RandomForestClassifier']['param_grid']
+            elif model_name == 'DecisionTreeClassifier':
+                param_grid = self.config['model_fine_tuning']['DecisionTreeClassifier']['param_grid']
             elif model_name == 'SVC':
                 param_grid = self.config['model_fine_tuning']['SVC']['param_grid']
             elif model_name == 'LogisticRegression':

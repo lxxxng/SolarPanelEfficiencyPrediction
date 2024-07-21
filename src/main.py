@@ -32,6 +32,7 @@ def main(config_path):
     merged_df = engineer.engineer_features(merged_df)
     
     # 4. feature selection
+    # These features are removed based on analysis in eda
     to_drop = ['data_ref_x', 'data_ref_y', 'Highest 30 Min Rainfall (mm)', \
             'Highest 60 Min Rainfall (mm)', 'Highest 120 Min Rainfall (mm)', 'date']
     merged_df.drop(columns=to_drop, inplace=True)

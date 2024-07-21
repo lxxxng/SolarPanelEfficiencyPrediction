@@ -16,6 +16,7 @@ preprocessing:
 model_training:
   algorithms: 
     - RandomForestClassifier
+    - DecisionTreeClassifier
     - SVC
     - LogisticRegression
     - MLP
@@ -47,3 +48,13 @@ model_fine_tuning:
       solver: ['adam', 'sgd']
       learning_rate_init: [0.001, 0.01]
       max_iter: [200, 300, 500]
+  DecisionTreeClassifier:
+    param_grid:
+      criterion: ['gini', 'entropy']
+      splitter: ['best', 'random']
+      max_depth: [10, 20, 30, 40, 50]
+      min_samples_split: [2, 5, 10, 20]
+      min_samples_leaf: [1, 2, 4, 6]
+      max_features: ['auto', 'sqrt', 'log2']
+      max_leaf_nodes: [10, 20, 30, 40, 50]
+      min_impurity_decrease: [0.0, 0.01, 0.1]

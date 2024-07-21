@@ -1,4 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
@@ -14,6 +15,8 @@ class ModelTraining:
         for algorithm in algorithms:
             if algorithm == 'RandomForestClassifier':
                 model = RandomForestClassifier(n_estimators=100, random_state=42)
+            elif algorithm == 'DecisionTreeClassifier':
+                model = DecisionTreeClassifier(random_state=42)
             elif algorithm == 'SVC':
                 model = SVC(kernel='linear', C=1.0, random_state=42)
             elif algorithm == 'LogisticRegression':
