@@ -1,4 +1,0 @@
-# ingore the data files and virtual environment
-venv/
-.gitignore
-models/
