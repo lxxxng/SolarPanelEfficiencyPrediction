@@ -46,4 +46,4 @@ model_fine_tuning:
       activation: ['relu', 'tanh']
       solver: ['adam', 'sgd']
       learning_rate_init: [0.001, 0.01]
-      max_iter: [200, 300]
+      max_iter: [200, 300, 500]
