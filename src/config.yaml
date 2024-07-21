@@ -18,12 +18,13 @@ model_training:
     - RandomForestClassifier
     - SVC
     - LogisticRegression
+    - MLP
 
 model_fine_tuning:
   RandomForestClassifier:
     param_grid:
       n_estimators: [100, 200, 300, 500]
-      max_depth: [10, 20, 30, None]
+      max_depth: [10, 20, 30, 50]
       min_samples_split: [2, 5, 10]
       min_samples_leaf: [1, 2, 4]
       bootstrap: [True, False]
@@ -39,3 +40,10 @@ model_fine_tuning:
       solver: ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
       penalty: ['l2']
       max_iter: [100, 200, 300, None]
+  MLP:
+    param_grid:
+      hidden_layer_sizes: [[50], [100], [150]]
+      activation: ['relu', 'tanh']
+      solver: ['adam', 'sgd']
+      learning_rate_init: [0.001, 0.01]
+      max_iter: [200, 300]

@@ -26,6 +26,9 @@ class ModelFineTuning:
                 param_grid = self.config['model_fine_tuning']['SVC']['param_grid']
             elif model_name == 'LogisticRegression':
                 param_grid = self.config['model_fine_tuning']['LogisticRegression']['param_grid']
+            elif model_name == 'MLP':
+                param_grid = self.config['model_fine_tuning']['MLP']['param_grid']
+            
             else:
                 raise ValueError("Unsupported algorithm specified in config.")
             

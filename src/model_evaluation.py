@@ -33,7 +33,7 @@ class ModelEvaluation:
                         print(f"    {metric_name}: {value}")
                     print("\n")
                 else:
-                    print(f"  {label}: {metrics}")
+                    print(f"  {label}: {metrics} \n")
             print(f"{model_name} Confusion Matrix:\n{result['confusion_matrix']}")
             print()
             print("----------------------------------------------------------------------------------")

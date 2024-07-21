@@ -8,18 +8,20 @@ class DataPreprocessing:
         self.config = config
 
     # Convert columns to numeric
-    def convert_datatype_numeric(self, columns, df):    
+    def convert_datatype_numeric(self, columns, df):
         for column in columns:
             df[column] = pd.to_numeric(df[column], errors='coerce')
-        return df 
+        return df
     
+    # Convert column to datetime object
     def convert_datatype_datetime(self, column, df):    
         df[column] = pd.to_datetime(df[column], format='%d/%m/%Y')
         return df 
     
     # convert deg F to deg C
-    def fahrenheit_to_celcius(self, column, df):
-        df[column] = (df[column] - 32) * 5.0/9.0
+    def fahrenheit_to_celsius(self, column, df):
+        df['Wet Bulb Temperature (deg C)'] = (df['Wet Bulb Temperature (deg F)'] - 32) * 5.0/9.0
+        df = df.drop(columns=['Wet Bulb Temperature (deg F)'])
         return df 
     
     def group_by_and_fill(self, column, df):
@@ -50,12 +52,12 @@ class DataPreprocessing:
 
     # merge the 2 datasets using outer join
     def merge_data(self, df1, df2, column):
-        self.convert_datatype_datetime(column, df1)
-        self.convert_datatype_datetime(column, df2)
+        df1 = self.convert_datatype_datetime(column, df1)
+        df2 = self.convert_datatype_datetime(column, df2)
         merged_df = pd.merge(df1, df2, on=column, how='outer')
         return merged_df
 
-    # mapping for  categorical feaetures
+    # mapping for categorical feaetures
     def map_categorical(self, df):
         wind_direction_map = {
             'N.': 'N', 
@@ -155,3 +157,46 @@ class DataPreprocessing:
         X_train, X_test, y_train, y_test = train_test_split(\
             X, y, test_size=0.2, random_state=42, stratify=y)
         return X_train, X_test, y_train, y_test
+    
+    def preprocess_data(self, weather_df, air_df):
+        # Define columns to convert to numeric
+        weather_numeric_columns = [
+            'Daily Rainfall Total (mm)',
+            'Highest 30 Min Rainfall (mm)',
+            'Highest 60 Min Rainfall (mm)',
+            'Highest 120 Min Rainfall (mm)',
+            'Min Temperature (deg C)',
+            'Maximum Temperature (deg C)',
+            'Min Wind Speed (km/h)',
+            'Max Wind Speed (km/h)'
+        ]
+        air_numeric_columns = [
+            'pm25_north', 'pm25_south', 'pm25_east', 'pm25_west', 'pm25_central',
+            'psi_north', 'psi_south', 'psi_east', 'psi_west', 'psi_central'
+        ]
+
+        # Convert to numeric
+        self.convert_datatype_numeric(weather_numeric_columns, weather_df)
+        self.convert_datatype_numeric(air_numeric_columns, air_df)
+
+        # Convert Fahrenheit to Celsius
+        weather_df = self.fahrenheit_to_celsius('Wet Bulb Temperature (deg F)', weather_df)
+
+        # Remove duplicates
+        weather_df = weather_df.drop_duplicates()
+        air_df = air_df.drop_duplicates()
+
+        # Group by and fill based on date
+        air_df = self.group_by_and_fill('date', air_df)
+
+        # Handle missing values
+        weather_df = self.handle_missing_values(weather_df)
+        air_df = self.handle_missing_values(air_df)
+
+        # Map categorical features
+        weather_df = self.map_categorical(weather_df)
+        
+        # Merge 2 datasets
+        merged_df = self.merge_data(weather_df, air_df, 'date')
+        
+        return merged_df
