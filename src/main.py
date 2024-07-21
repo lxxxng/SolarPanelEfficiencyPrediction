@@ -104,14 +104,14 @@ def main(config_path):
     evaluator.print_results(initial_results)
 
     # Fine-tune models
-    print("--------------------------- Fine tuning -----------------------------------")
+    print("\n--------------------------- Fine tuning -----------------------------------")
     fine_tuner = ModelFineTuning(config)
     best_models, best_params = fine_tuner.fine_tune_models(models, X_train, y_train)
     
     for model_name, model in best_models.items():
         joblib.dump(model, f'models/{model_name}_best_model.joblib')
         
-    print("--------------------------- Fine tuning completed ! -----------------------------------")
+    print("\n--------------------------- Fine tuning completed ! -----------------------------------")
         
     print("Best Parameters for Fine-Tuned Models:")
     for model_name, params in best_params.items():
